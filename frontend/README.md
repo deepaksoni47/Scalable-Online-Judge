@@ -1,6 +1,4 @@
-# Online Judge Frontend
-
-Phase 3 implements the frontend authentication module only.
+# Online Judge Frontends
 
 ## Setup
 
@@ -47,3 +45,13 @@ Update `VITE_API_BASE_URL` in `.env` if the backend runs elsewhere.
 5. Click a tag chip and confirm only matching problems remain.
 6. Click `Solve` and confirm `/problems/:id` shows the full statement, examples, tags, and creator.
 7. Stop the backend and refresh `/problems` to confirm an error message appears.
+
+## Compiler UI Testing
+
+1. Open any problem detail page.
+2. Select `C++`, keep the default Hello World code, and click `Run`.
+3. Select `Java`, keep the default Hello World code, and click `Run`.
+4. Select `Python`, keep the default Hello World code, and click `Run`.
+5. Remove the code and confirm `Code is required` appears.
+6. Enter invalid C++ or Java syntax and confirm a compilation error appears.
+7. Enter `print(10 / 0)` in Python and confirm a runtime error appears.

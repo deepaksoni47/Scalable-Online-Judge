@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import CompilerWorkspace from "../components/compiler/CompilerWorkspace.jsx";
 import DifficultyBadge from "../components/problems/DifficultyBadge.jsx";
 import TagList from "../components/problems/TagList.jsx";
 import { getProblemById } from "../services/problemService.js";
@@ -112,6 +113,8 @@ const ProblemDetailPage = () => {
           {problem.createdBy?.email ? `(${problem.createdBy.email})` : ""}
         </p>
       </section>
+
+      <CompilerWorkspace />
     </article>
   );
 };

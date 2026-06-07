@@ -106,3 +106,70 @@ Headers:
 ```http
 Authorization: Bearer <ADMIN_JWT_TOKEN>
 ```
+
+# Compiler API Examples
+
+POST `/api/compiler/run`
+
+## C++ Hello World
+
+```json
+{
+  "language": "cpp",
+  "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << \"Hello World\" << endl;\n  return 0;\n}"
+}
+```
+
+## Python Hello World
+
+```json
+{
+  "language": "python",
+  "code": "print(\"Hello World\")"
+}
+```
+
+## Java Hello World
+
+```json
+{
+  "language": "java",
+  "code": "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hello World\");\n  }\n}"
+}
+```
+
+## Compilation Error
+
+```json
+{
+  "language": "cpp",
+  "code": "#include <iostream>\nint main() {\n  std::cout << \"Missing semicolon\"\n}"
+}
+```
+
+## Runtime Error
+
+```json
+{
+  "language": "python",
+  "code": "print(10 / 0)"
+}
+```
+
+## Empty Code
+
+```json
+{
+  "language": "python",
+  "code": ""
+}
+```
+
+## Invalid Language
+
+```json
+{
+  "language": "javascript",
+  "code": "console.log('Hello World')"
+}
+```

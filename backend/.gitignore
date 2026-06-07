@@ -1,3 +1,7 @@
 node_modules
 .env
 npm-debug.log*
+codes/*
+outputs/*
+!codes/.gitkeep
+!outputs/.gitkeep
