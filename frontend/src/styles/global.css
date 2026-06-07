@@ -553,7 +553,8 @@ button.tag-chip {
 }
 
 .compiler-language,
-.code-editor-label {
+.code-editor-label,
+.program-input-label {
   display: grid;
   gap: 0.45rem;
   color: #344054;
@@ -584,8 +585,23 @@ button.tag-chip {
   tab-size: 4;
 }
 
+.program-input {
+  min-height: 120px;
+  width: 100%;
+  padding: 1rem;
+  color: #172033;
+  background: #ffffff;
+  border: 1px solid rgba(23, 32, 51, 0.18);
+  border-radius: 16px;
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+  white-space: pre-wrap;
+}
+
 .compiler-language select:focus,
-.code-editor:focus {
+.code-editor:focus,
+.program-input:focus {
   border-color: #1d4f3d;
   box-shadow: 0 0 0 4px rgba(29, 79, 61, 0.1);
 }

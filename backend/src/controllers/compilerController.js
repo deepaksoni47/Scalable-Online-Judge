@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const generateFile = require("../compiler/generateFile");
+const generateInputFile = require("../compiler/generateInputFile");
 const executeCode = require("../compiler/executeCode");
 const asyncHandler = require("../utils/asyncHandler");
 
@@ -23,7 +24,7 @@ const validateRunRequest = ({ language, code }) => {
 };
 
 const runCode = asyncHandler(async (req, res) => {
-  const { language, code } = req.body;
+  const { language, code, input = "" } = req.body;
   const validationError = validateRunRequest({ language, code });
 
   if (validationError) {
@@ -34,11 +35,17 @@ const runCode = asyncHandler(async (req, res) => {
     });
   }
 
-  let filePath;
+  let codeFilePath;
+  let inputFilePath;
 
   try {
-    filePath = await generateFile({ language, code });
-    const output = await executeCode({ language, filePath });
+    codeFilePath = await generateFile({ language, code });
+    inputFilePath = await generateInputFile(input);
+    const output = await executeCode({
+      language,
+      codeFilePath,
+      inputFilePath,
+    });
 
     return res.status(200).json({
       success: true,
@@ -51,16 +58,20 @@ const runCode = asyncHandler(async (req, res) => {
       message: error.message || "Internal Server Error",
     });
   } finally {
-    if (filePath) {
-      const jobDir = path.dirname(filePath);
+    if (codeFilePath) {
+      const jobDir = path.dirname(codeFilePath);
 
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+      if (fs.existsSync(codeFilePath)) {
+        fs.unlinkSync(codeFilePath);
       }
 
       if (fs.existsSync(jobDir)) {
         fs.rmSync(jobDir, { recursive: true, force: true });
       }
+    }
+
+    if (inputFilePath && fs.existsSync(inputFilePath)) {
+      fs.unlinkSync(inputFilePath);
     }
   }
 });

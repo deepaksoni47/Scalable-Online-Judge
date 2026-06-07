@@ -116,7 +116,8 @@ POST `/api/compiler/run`
 ```json
 {
   "language": "cpp",
-  "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << \"Hello World\" << endl;\n  return 0;\n}"
+  "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << \"Hello World\" << endl;\n  return 0;\n}",
+  "input": ""
 }
 ```
 
@@ -125,7 +126,8 @@ POST `/api/compiler/run`
 ```json
 {
   "language": "python",
-  "code": "print(\"Hello World\")"
+  "code": "print(\"Hello World\")",
+  "input": ""
 }
 ```
 
@@ -134,7 +136,38 @@ POST `/api/compiler/run`
 ```json
 {
   "language": "java",
-  "code": "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hello World\");\n  }\n}"
+  "code": "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hello World\");\n  }\n}",
+  "input": ""
+}
+```
+
+## C++ With Input
+
+```json
+{
+  "language": "cpp",
+  "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n  int a, b;\n  cin >> a >> b;\n  cout << a + b;\n  return 0;\n}",
+  "input": "5 10"
+}
+```
+
+## Python With Input
+
+```json
+{
+  "language": "python",
+  "code": "name = input()\nprint(\"Hello\", name)",
+  "input": "Deepak"
+}
+```
+
+## Java With Input
+
+```json
+{
+  "language": "java",
+  "code": "public class Main {\n  public static void main(String[] args) {\n    java.util.Scanner scanner = new java.util.Scanner(System.in);\n    int a = scanner.nextInt();\n    int b = scanner.nextInt();\n    System.out.println(a + b);\n  }\n}",
+  "input": "5\n10"
 }
 ```
 
@@ -143,7 +176,8 @@ POST `/api/compiler/run`
 ```json
 {
   "language": "cpp",
-  "code": "#include <iostream>\nint main() {\n  std::cout << \"Missing semicolon\"\n}"
+  "code": "#include <iostream>\nint main() {\n  std::cout << \"Missing semicolon\"\n}",
+  "input": ""
 }
 ```
 
@@ -152,7 +186,8 @@ POST `/api/compiler/run`
 ```json
 {
   "language": "python",
-  "code": "print(10 / 0)"
+  "code": "print(10 / 0)",
+  "input": ""
 }
 ```
 
@@ -161,7 +196,8 @@ POST `/api/compiler/run`
 ```json
 {
   "language": "python",
-  "code": ""
+  "code": "",
+  "input": ""
 }
 ```
 
@@ -170,6 +206,7 @@ POST `/api/compiler/run`
 ```json
 {
   "language": "javascript",
-  "code": "console.log('Hello World')"
+  "code": "console.log('Hello World')",
+  "input": ""
 }
 ```

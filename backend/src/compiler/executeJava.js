@@ -27,7 +27,7 @@ const runCommand = (command, options = {}) => {
 
 const quote = (value) => `"${value}"`;
 
-const executeJava = async (filePath) => {
+const executeJava = async (filePath, inputFilePath = null) => {
   const jobDir = path.dirname(filePath);
   const classFilePath = path.join(jobDir, "Main.class");
 
@@ -42,7 +42,10 @@ const executeJava = async (filePath) => {
   }
 
   try {
-    const { stdout } = await runCommand("java Main", { cwd: jobDir });
+    const inputRedirect = inputFilePath ? ` < ${quote(inputFilePath)}` : "";
+    const { stdout } = await runCommand(`java Main${inputRedirect}`, {
+      cwd: jobDir,
+    });
     return stdout;
   } catch (error) {
     throw {

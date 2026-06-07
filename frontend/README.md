@@ -49,9 +49,10 @@ Update `VITE_API_BASE_URL` in `.env` if the backend runs elsewhere.
 ## Compiler UI Testing
 
 1. Open any problem detail page.
-2. Select `C++`, keep the default Hello World code, and click `Run`.
-3. Select `Java`, keep the default Hello World code, and click `Run`.
-4. Select `Python`, keep the default Hello World code, and click `Run`.
-5. Remove the code and confirm `Code is required` appears.
-6. Enter invalid C++ or Java syntax and confirm a compilation error appears.
-7. Enter `print(10 / 0)` in Python and confirm a runtime error appears.
+2. Select `C++`, keep the default sum code, keep input `5 10`, and click `Run`.
+3. Select `Java`, keep the default sum code, keep input `5 10`, and click `Run`.
+4. Select `Python`, keep the default greeting code, keep input `Deepak`, and click `Run`.
+5. Change C++ input to two lines, `5` and `10`, and confirm output is still `15`.
+6. Remove the code and confirm `Code is required` appears.
+7. Enter invalid C++ or Java syntax and confirm a compilation error appears.
+8. Enter `print(10 / 0)` in Python and confirm a runtime error appears.

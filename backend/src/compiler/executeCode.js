@@ -2,17 +2,17 @@ const executeCpp = require("./executeCpp");
 const executeJava = require("./executeJava");
 const executePython = require("./executePython");
 
-const executeCode = async ({ language, filePath }) => {
+const executeCode = async ({ language, codeFilePath, inputFilePath = null }) => {
   if (language === "cpp") {
-    return executeCpp(filePath);
+    return executeCpp(codeFilePath, inputFilePath);
   }
 
   if (language === "java") {
-    return executeJava(filePath);
+    return executeJava(codeFilePath, inputFilePath);
   }
 
   if (language === "python") {
-    return executePython(filePath);
+    return executePython(codeFilePath, inputFilePath);
   }
 
   throw {

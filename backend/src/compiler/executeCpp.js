@@ -34,7 +34,7 @@ const runCommand = (command) => {
 
 const quote = (value) => `"${value}"`;
 
-const executeCpp = async (filePath) => {
+const executeCpp = async (filePath, inputFilePath = null) => {
   ensureDirectory(outputsDir);
 
   const jobId = path.basename(filePath, path.extname(filePath));
@@ -52,7 +52,8 @@ const executeCpp = async (filePath) => {
   }
 
   try {
-    const runExecutableCommand = `cd /d ${quote(outputsDir)} && ${quote(`.\\${path.basename(executablePath)}`)}`;
+    const inputRedirect = inputFilePath ? ` < ${quote(inputFilePath)}` : "";
+    const runExecutableCommand = `cd /d ${quote(outputsDir)} && ${quote(`.\\${path.basename(executablePath)}`)}${inputRedirect}`;
     const { stdout } = await runCommand(runExecutableCommand);
     return stdout;
   } catch (error) {

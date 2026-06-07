@@ -24,11 +24,14 @@ const runCommand = (command) => {
 
 const quote = (value) => `"${value}"`;
 
-const executePython = async (filePath) => {
+const executePython = async (filePath, inputFilePath = null) => {
   const pythonCommand = process.env.PYTHON_BIN || "python";
+  const inputRedirect = inputFilePath ? ` < ${quote(inputFilePath)}` : "";
 
   try {
-    const { stdout } = await runCommand(`${pythonCommand} ${quote(filePath)}`);
+    const { stdout } = await runCommand(
+      `${pythonCommand} ${quote(filePath)}${inputRedirect}`,
+    );
     return stdout;
   } catch (error) {
     throw {

@@ -7,23 +7,36 @@ const starterCode = {
 using namespace std;
 
 int main() {
-    cout << "Hello World" << endl;
+    int a, b;
+    cin >> a >> b;
+    cout << a + b << endl;
     return 0;
 }
 `,
   java: `public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello World");
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        int a = scanner.nextInt();
+        int b = scanner.nextInt();
+        System.out.println(a + b);
     }
 }
 `,
-  python: `print("Hello World")
+  python: `name = input()
+print("Hello", name)
 `,
+};
+
+const starterInput = {
+  cpp: "5 10",
+  java: "5 10",
+  python: "Deepak",
 };
 
 const CompilerWorkspace = () => {
   const [language, setLanguage] = useState("cpp");
   const [code, setCode] = useState(starterCode.cpp);
+  const [input, setInput] = useState(starterInput.cpp);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [isRunning, setIsRunning] = useState(false);
@@ -32,6 +45,7 @@ const CompilerWorkspace = () => {
     const nextLanguage = event.target.value;
     setLanguage(nextLanguage);
     setCode(starterCode[nextLanguage]);
+    setInput(starterInput[nextLanguage]);
     setOutput("");
     setError("");
   };
@@ -47,7 +61,7 @@ const CompilerWorkspace = () => {
 
     try {
       setIsRunning(true);
-      const response = await runCode({ language, code });
+      const response = await runCode({ language, code, input });
       setOutput(response.output || "Program executed with no output.");
     } catch (apiError) {
       const errorType = apiError.response?.data?.errorType;
@@ -82,6 +96,17 @@ const CompilerWorkspace = () => {
           className="code-editor"
           value={code}
           onChange={(event) => setCode(event.target.value)}
+          spellCheck="false"
+        />
+      </label>
+
+      <label className="program-input-label">
+        <span>Custom Input</span>
+        <textarea
+          className="program-input"
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          placeholder={"Optional stdin input, for example:\n5 10\nor\n5\n10"}
           spellCheck="false"
         />
       </label>
