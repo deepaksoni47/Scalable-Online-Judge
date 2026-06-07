@@ -114,7 +114,7 @@ const ProblemDetailPage = () => {
         </p>
       </section>
 
-      <CompilerWorkspace />
+      <CompilerWorkspace problemId={id} problem={problem} />
     </article>
   );
 };
