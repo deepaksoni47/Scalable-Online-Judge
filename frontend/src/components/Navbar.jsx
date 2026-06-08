@@ -23,6 +23,7 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             <span className="nav-user">Hi, {user?.name}</span>
+            <NavLink to="/ai-reviews">AI Reviews</NavLink>
             <NavLink to="/profile">Profile</NavLink>
             <button className="link-button" type="button" onClick={handleLogout}>
               Logout

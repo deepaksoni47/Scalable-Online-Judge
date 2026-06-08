@@ -7,6 +7,7 @@ import Register from "../pages/Register.jsx";
 import Profile from "../pages/Profile.jsx";
 import ProblemsPage from "../pages/ProblemsPage.jsx";
 import ProblemDetailPage from "../pages/ProblemDetailPage.jsx";
+import ReviewHistoryPage from "../pages/ReviewHistoryPage.jsx";
 
 const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const AppRoutes = () => {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/ai-reviews" element={<ReviewHistoryPage />} />
         </Route>
       </Route>
     </Routes>

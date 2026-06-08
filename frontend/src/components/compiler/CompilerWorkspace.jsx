@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { runCode } from "../../services/compilerService.js";
 import { submitSolution, getMySubmissions, getSubmissionById } from "../../services/submissionService.js";
+import { requestAIReview } from "../../services/aiService.js";
+import ReactMarkdown from "react-markdown";
+import Editor from "@monaco-editor/react";
 import { getErrorMessage } from "../../utils/getErrorMessage.js";
 import useAuth from "../../hooks/useAuth.js";
 import { Link } from "react-router-dom";
@@ -45,6 +48,12 @@ const CompilerWorkspace = ({ problemId, problem }) => {
   const [error, setError] = useState("");
   const [isRunning, setIsRunning] = useState(false);
 
+  // AI review states
+  const [aiReview, setAiReview] = useState("");
+  const [aiReviewError, setAiReviewError] = useState("");
+  const [isGeneratingReview, setIsGeneratingReview] = useState(false);
+  const [aiReviewCached, setAiReviewCached] = useState(false);
+
   // Submission system states
   const [activeTab, setActiveTab] = useState("editor"); // "editor" | "history"
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +65,38 @@ const CompilerWorkspace = ({ problemId, problem }) => {
   // Selected history item modal/viewer
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+
+  const handleAIReview = async () => {
+    setAiReview("");
+    setAiReviewError("");
+    setAiReviewCached(false);
+
+    if (!code.trim()) {
+      setAiReviewError("Code content is required");
+      return;
+    }
+
+    try {
+      setIsGeneratingReview(true);
+      const response = await requestAIReview({
+        problemId,
+        code,
+        language,
+      });
+
+      if (response.success && response.data) {
+        setAiReview(response.data.review);
+        setAiReviewCached(!!response.data.cached);
+      } else {
+        setAiReviewError(response.message || "Failed to generate AI review");
+      }
+    } catch (apiError) {
+      const message = getErrorMessage(apiError);
+      setAiReviewError(message || "An error occurred while generating AI review");
+    } finally {
+      setIsGeneratingReview(false);
+    }
+  };
 
   // Fetch submission history for this problem
   const fetchHistory = async () => {
@@ -225,7 +266,7 @@ const CompilerWorkspace = ({ problemId, problem }) => {
 
             <label className="compiler-language">
               <span>Language</span>
-              <select value={language} onChange={handleLanguageChange} disabled={isRunning || isSubmitting}>
+              <select value={language} onChange={handleLanguageChange} disabled={isRunning || isSubmitting || isGeneratingReview}>
                 <option value="cpp">C++</option>
                 <option value="java">Java</option>
                 <option value="python">Python</option>
@@ -234,26 +275,44 @@ const CompilerWorkspace = ({ problemId, problem }) => {
           </div>
 
           <label className="code-editor-label">
-            <span>Code Editor</span>
-            <textarea
-              className="code-editor"
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              spellCheck="false"
-              disabled={isRunning || isSubmitting}
-            />
+             <span>Code Editor</span>
+             <div className="monaco-editor-wrapper">
+               <Editor
+                 height="100%"
+                 language={language === "cpp" ? "cpp" : language === "java" ? "java" : "python"}
+                 theme="vs-dark"
+                 value={code}
+                 onChange={(val) => setCode(val || "")}
+                 options={{
+                   fontSize: 14,
+                   minimap: { enabled: false },
+                   automaticLayout: true,
+                   scrollBeyondLastLine: false,
+                   tabSize: 4,
+                   cursorBlinking: "smooth",
+                   padding: { top: 12, bottom: 12 },
+                   readOnly: isRunning || isSubmitting || isGeneratingReview,
+                   fontFamily: "'Courier New', Courier, monospace",
+                   fontLigatures: true,
+                   formatOnType: true,
+                   formatOnPaste: true,
+                   lineNumbersMinChars: 3,
+                 }}
+               />
+             </div>
           </label>
 
-          <label className="program-input-label">
-            <span>Custom Input (for Run)</span>
-            <textarea
-              className="program-input"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder={"Optional stdin input, for example:\n5 10\nor\n5\n10"}
-              spellCheck="false"
-              disabled={isRunning || isSubmitting}
-            />
+          <div className="editor-controls-pane">
+            <label className="program-input-label">
+               <span>Custom Input (for Run)</span>
+             <textarea
+               className="program-input"
+               value={input}
+               onChange={(event) => setInput(event.target.value)}
+               placeholder={"Optional stdin input, for example:\n5 10\nor\n5\n10"}
+               spellCheck="false"
+               disabled={isRunning || isSubmitting || isGeneratingReview}
+             />
           </label>
 
           <div className="action-buttons-group">
@@ -261,27 +320,40 @@ const CompilerWorkspace = ({ problemId, problem }) => {
               className="secondary-button run-button"
               type="button"
               onClick={handleRun}
-              disabled={isRunning || isSubmitting}
+              disabled={isRunning || isSubmitting || isGeneratingReview}
             >
               {isRunning ? "Running..." : "Run Code"}
             </button>
 
             {isAuthenticated ? (
-              <button
-                className="primary-button submit-button"
-                type="button"
-                onClick={handleSubmit}
-                disabled={isRunning || isSubmitting}
-              >
-                {isSubmitting ? "Evaluating..." : "Submit Solution"}
-              </button>
+              <>
+                <button
+                  className="primary-button submit-button"
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={isRunning || isSubmitting || isGeneratingReview}
+                >
+                  {isSubmitting ? "Evaluating..." : "Submit Solution"}
+                </button>
+                <button
+                  className="ai-review-button"
+                  type="button"
+                  onClick={handleAIReview}
+                  disabled={isRunning || isSubmitting || isGeneratingReview}
+                >
+                  {isGeneratingReview ? "Generating Review..." : "AI Review"}
+                </button>
+              </>
             ) : (
               <div className="auth-cta-group">
                 <button className="primary-button submit-button" type="button" disabled>
                   Submit Solution
                 </button>
+                <button className="ai-review-button" type="button" disabled>
+                  AI Review
+                </button>
                 <span className="auth-cta-text">
-                  Please <Link to="/login">login</Link> to submit.
+                  Please <Link to="/login">login</Link> to submit or request AI review.
                 </span>
               </div>
             )}
@@ -346,6 +418,51 @@ const CompilerWorkspace = ({ problemId, problem }) => {
               )}
             </section>
           )}
+
+          {/* AI Review Panel */}
+          {(isGeneratingReview || aiReview || aiReviewError) && (
+            <section className="ai-review-section card-fade-in">
+              <div className="ai-review-header-row">
+                <div className="ai-title-group">
+                  <span className="ai-sparkle-icon">✨</span>
+                  <h3>AI Code Review</h3>
+                  {aiReviewCached && <span className="cached-badge">Cached</span>}
+                </div>
+                <button
+                  className="close-review-button"
+                  onClick={() => {
+                    setAiReview("");
+                    setAiReviewError("");
+                    setAiReviewCached(false);
+                  }}
+                  type="button"
+                >
+                  &times;
+                </button>
+              </div>
+
+              {isGeneratingReview && (
+                <div className="ai-loading-container">
+                  <div className="spinner"></div>
+                  <p>Analyzing code quality, time/space complexity, bugs, and edge cases...</p>
+                </div>
+              )}
+
+              {aiReviewError && (
+                <div className="compilation-error-container">
+                  <h4>Review Error</h4>
+                  <pre className="compilation-error-text">{aiReviewError}</pre>
+                </div>
+              )}
+
+              {aiReview && !isGeneratingReview && (
+                <div className="ai-review-markdown">
+                  <ReactMarkdown>{aiReview}</ReactMarkdown>
+                </div>
+              )}
+            </section>
+          )}
+          </div> {/* Closing editor-controls-pane */}
         </div>
       ) : (
         /* Submission History Tab Content */
