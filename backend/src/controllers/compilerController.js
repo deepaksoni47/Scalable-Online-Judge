@@ -5,7 +5,7 @@ const generateInputFile = require("../compiler/generateInputFile");
 const executeCode = require("../compiler/executeCode");
 const asyncHandler = require("../utils/asyncHandler");
 
-const supportedLanguages = ["cpp", "java", "python"];
+const supportedLanguages = ["cpp", "python", "java"];
 
 const validateRunRequest = ({ language, code }) => {
   if (!language) {
@@ -13,7 +13,7 @@ const validateRunRequest = ({ language, code }) => {
   }
 
   if (!supportedLanguages.includes(language)) {
-    return "Supported languages are cpp, java and python";
+    return "Supported languages are cpp, python and java";
   }
 
   if (!code || !code.trim()) {
@@ -62,16 +62,16 @@ const runCode = asyncHandler(async (req, res) => {
       const jobDir = path.dirname(codeFilePath);
 
       if (fs.existsSync(codeFilePath)) {
-        fs.unlinkSync(codeFilePath);
+        try { fs.unlinkSync(codeFilePath); } catch (e) {}
       }
 
       if (fs.existsSync(jobDir)) {
-        fs.rmSync(jobDir, { recursive: true, force: true });
+        try { fs.rmSync(jobDir, { recursive: true, force: true }); } catch (e) {}
       }
     }
 
     if (inputFilePath && fs.existsSync(inputFilePath)) {
-      fs.unlinkSync(inputFilePath);
+      try { fs.unlinkSync(inputFilePath); } catch (e) {}
     }
   }
 });

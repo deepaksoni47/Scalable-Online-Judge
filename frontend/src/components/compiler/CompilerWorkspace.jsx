@@ -186,6 +186,10 @@ const CompilerWorkspace = ({ problemId, problem }) => {
         return "verdict-badge verdict-ce";
       case "Runtime Error":
         return "verdict-badge verdict-re";
+      case "Time Limit Exceeded":
+        return "verdict-badge verdict-tle";
+      case "Memory Limit Exceeded":
+        return "verdict-badge verdict-mle";
       default:
         return "verdict-badge";
     }

@@ -776,6 +776,18 @@ button.tag-chip {
   border: 1px solid #ffc7b8;
 }
 
+.verdict-tle {
+  color: #8c4c00;
+  background: #fff5e6;
+  border: 1px solid #ffd480;
+}
+
+.verdict-mle {
+  color: #5900b3;
+  background: #f5e6ff;
+  border: 1px solid #d480ff;
+}
+
 .verdict-details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));

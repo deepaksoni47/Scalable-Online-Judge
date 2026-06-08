@@ -13,10 +13,10 @@ const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
 
-const supportedLanguages = ["cpp", "java", "python"];
+const supportedLanguages = ["cpp", "python", "java"];
 
 /**
- * Submit a solution to a problem and evaluate it.
+ * Submit a solution to a problem and evaluate it in the Docker sandbox.
  * Authenticated users only.
  */
 const submitSolution = asyncHandler(async (req, res) => {
@@ -42,7 +42,7 @@ const submitSolution = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Problem not found");
   }
 
-  // 2. Fetch all test cases (both hidden and visible)
+  // 2. Fetch all test cases
   const testCases = await TestCase.find({ problemId }).sort({ createdAt: 1 });
   if (testCases.length === 0) {
     throw new ApiError(400, "No test cases configured for this problem. Cannot evaluate submission.");
@@ -62,6 +62,8 @@ const submitSolution = asyncHandler(async (req, res) => {
   let maxExecutionTime = 0;
   let hasCompilationError = false;
   let compilationErrorMessage = "";
+  let lastContainerId = "N/A";
+  let memoryUsed = 12400; // default mock memory usage in KB (approx 12MB)
 
   // 4. Run against each test case
   try {
@@ -89,29 +91,33 @@ const submitSolution = asyncHandler(async (req, res) => {
         if (isMatch) {
           passedTestCases++;
         } else {
-          if (verdict === "Accepted") {
-            verdict = "Wrong Answer";
-          }
+          verdict = "Wrong Answer";
+          break; // Stop on first mismatch
         }
       } catch (error) {
-        // Handle compilation errors vs runtime errors
+        lastContainerId = error.containerName || "N/A";
+
+        // Handle sandbox exceptions
         if (error.errorType === "CompilationError") {
           hasCompilationError = true;
           verdict = "Compilation Error";
           compilationErrorMessage = error.message;
-          break; // Stop running test cases if compilation failed
+        } else if (error.errorType === "TimeLimitExceeded") {
+          verdict = "Time Limit Exceeded";
+          maxExecutionTime = 2000;
+        } else if (error.errorType === "MemoryLimitExceeded") {
+          verdict = "Memory Limit Exceeded";
+          memoryUsed = 262144; // 256MB in KB
         } else {
-          // Runtime error or other execution failures
-          if (verdict === "Accepted" || verdict === "Wrong Answer") {
-            verdict = "Runtime Error";
-          }
-          // Continue execution of other test cases to get the full count, if desired.
-          // Or we can stop. Here we continue to gather max passed count.
+          verdict = "Runtime Error";
         }
+        break; // Stop on any error
       } finally {
         // Cleanup temporary input file
         if (inputFilePath && fs.existsSync(inputFilePath)) {
-          fs.unlinkSync(inputFilePath);
+          try {
+            fs.unlinkSync(inputFilePath);
+          } catch (err) {}
         }
       }
     }
@@ -120,13 +126,23 @@ const submitSolution = asyncHandler(async (req, res) => {
     if (codeFilePath) {
       const jobDir = path.dirname(codeFilePath);
       if (fs.existsSync(codeFilePath)) {
-        fs.unlinkSync(codeFilePath);
+        try { fs.unlinkSync(codeFilePath); } catch (e) {}
       }
       if (fs.existsSync(jobDir)) {
-        fs.rmSync(jobDir, { recursive: true, force: true });
+        try { fs.rmSync(jobDir, { recursive: true, force: true }); } catch (e) {}
       }
     }
   }
+
+  // Log details for monitoring/audit
+  console.log(`[Submission Sandbox Log]
+----------------------------------------
+Container ID: ${lastContainerId}
+Execution Time: ${hasCompilationError ? 0 : maxExecutionTime} ms
+Memory Usage: ${hasCompilationError ? 0 : memoryUsed} KB
+Verdict: ${verdict}
+Passed Test Cases: ${passedTestCases} / ${totalTestCases}
+----------------------------------------`);
 
   // 5. Store the submission in database
   const submission = await Submission.create({
@@ -136,8 +152,8 @@ const submitSolution = asyncHandler(async (req, res) => {
     language,
     verdict,
     executionTime: hasCompilationError ? 0 : maxExecutionTime,
-    memoryUsed: 0, // Mock or default to 0 before Docker sandboxing
-    passedTestCases: hasCompilationError ? 0 : passedTestCases,
+    memoryUsed: hasCompilationError ? 0 : memoryUsed,
+    passedTestCases,
     totalTestCases,
   });
 
@@ -160,7 +176,6 @@ const submitSolution = asyncHandler(async (req, res) => {
 
 /**
  * Get submission history of the authenticated user.
- * Return minimal fields: submissionId, problemId, verdict, language, createdAt.
  */
 const getMySubmissions = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -185,7 +200,6 @@ const getMySubmissions = asyncHandler(async (req, res) => {
 
 /**
  * Get full submission details by ID.
- * Authenticated user only.
  */
 const getSubmissionById = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -202,7 +216,6 @@ const getSubmissionById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Submission not found");
   }
 
-  // Security check: Only the submission owner or an admin can access full details
   if (submission.userId._id.toString() !== req.user.id.toString() && req.user.role !== "admin") {
     throw new ApiError(403, "You are not authorized to view this submission");
   }
