@@ -8,6 +8,7 @@ const generateFile = require("../compiler/generateFile");
 const generateInputFile = require("../compiler/generateInputFile");
 const executeCode = require("../compiler/executeCode");
 const compareOutput = require("../utils/compareOutput");
+const { updateUserStatsForSubmission } = require("../services/statsService");
 const { performance } = require("perf_hooks");
 const fs = require("fs");
 const path = require("path");
@@ -156,6 +157,8 @@ Passed Test Cases: ${passedTestCases} / ${totalTestCases}
     passedTestCases,
     totalTestCases,
   });
+
+  await updateUserStatsForSubmission(submission);
 
   // Return response
   return res.status(201).json(

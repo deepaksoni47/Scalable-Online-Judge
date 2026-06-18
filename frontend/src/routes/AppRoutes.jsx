@@ -8,6 +8,8 @@ import Profile from "../pages/Profile.jsx";
 import ProblemsPage from "../pages/ProblemsPage.jsx";
 import ProblemDetailPage from "../pages/ProblemDetailPage.jsx";
 import ReviewHistoryPage from "../pages/ReviewHistoryPage.jsx";
+import LeaderboardPage from "../pages/LeaderboardPage.jsx";
+import DashboardPage from "../pages/DashboardPage.jsx";
 
 const AppRoutes = () => {
   return (
@@ -16,10 +18,12 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/problems" element={<ProblemsPage />} />
         <Route path="/problems/:id" element={<ProblemDetailPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/ai-reviews" element={<ReviewHistoryPage />} />
         </Route>

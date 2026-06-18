@@ -19,10 +19,12 @@ const Navbar = () => {
       <nav className="nav-links" aria-label="Primary navigation">
         <NavLink to="/">Home</NavLink>
         <NavLink to="/problems">Problems</NavLink>
+        <NavLink to="/leaderboard">Leaderboard</NavLink>
 
         {isAuthenticated ? (
           <>
             <span className="nav-user">Hi, {user?.name}</span>
+            <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/ai-reviews">AI Reviews</NavLink>
             <NavLink to="/profile">Profile</NavLink>
             <button className="link-button" type="button" onClick={handleLogout}>
