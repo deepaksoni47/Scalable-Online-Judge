@@ -74,8 +74,8 @@ const getOrGenerateReview = async ({ userId, problemId, code, language }) => {
   const prompt = buildReviewPrompt({ problem, code: normalizedCode, language });
 
   try {
-    // Using gemini-1.5-flash for fast, optimized responses
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Using gemini-2.5-flash for fast, optimized responses
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const reviewText = response.text();
