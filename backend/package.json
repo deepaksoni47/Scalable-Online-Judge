@@ -9,6 +9,7 @@
     "dev": "nodemon server.js",
     "seed:problems": "node src/seeds/problemSeeder.js",
     "seed:testcases": "node src/seeds/testCaseSeeder.js",
+    "sync:stats": "node src/seeds/syncStats.js",
     "test:sandbox": "node src/seeds/testSandboxScenarios.js"
   },
   "keywords": [
