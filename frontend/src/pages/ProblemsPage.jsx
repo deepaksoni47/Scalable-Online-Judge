@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { SearchX } from "lucide-react";
 import DifficultyBadge from "../components/problems/DifficultyBadge.jsx";
 import TagList from "../components/problems/TagList.jsx";
 import SearchBar from "../components/problems/SearchBar.jsx";
@@ -117,8 +118,8 @@ const ProblemsPage = () => {
         <div className="alert error">{error}</div>
       ) : filteredProblems.length === 0 ? (
         <div className="empty-state" style={{ padding: "5rem 2rem" }}>
-          <span style={{ fontSize: "2.5rem" }}>🔍</span>
-          <h3 style={{ margin: "1rem 0 0.5rem 0" }}>No Problems Found</h3>
+          <SearchX size={40} style={{ margin: "0 auto 1rem", display: "block", color: "#667085" }} />
+          <h3 style={{ margin: "0 0 0.5rem 0" }}>No Problems Found</h3>
           <p style={{ color: "var(--text-muted)", margin: 0 }}>
             Try adjusting your search terms or filters to find problems.
           </p>

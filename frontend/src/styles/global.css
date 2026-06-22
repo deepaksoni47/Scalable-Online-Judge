@@ -86,7 +86,14 @@ textarea {
 .main-content {
   width: min(100%, 960px);
   margin: 0 auto;
-  padding: clamp(1.5rem, 5vw, 4rem) 1rem;
+  padding: clamp(1.5rem, 5vw, 4rem) clamp(0rem, 3vw, 1rem);
+}
+
+@media (max-width: 620px) {
+  .main-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .hero-card,
@@ -927,12 +934,22 @@ button.tag-chip {
 }
 
 .close-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
-  font-size: 1.75rem;
   color: #667085;
   cursor: pointer;
   line-height: 1;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.close-button:hover {
+  color: #172033;
+  background: #f1f5f9;
 }
 
 .modal-body {
@@ -1073,8 +1090,9 @@ button.tag-chip {
 }
 
 .ai-sparkle-icon {
-  font-size: 1.5rem;
+  color: #7c3aed;
   animation: float 2s ease-in-out infinite;
+  flex-shrink: 0;
 }
 
 @keyframes float {
@@ -1103,17 +1121,22 @@ button.tag-chip {
 }
 
 .close-review-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
-  font-size: 2rem;
   color: #667085;
   cursor: pointer;
   line-height: 1;
-  transition: color 0.2s;
+  padding: 0.25rem;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
 }
 
 .close-review-button:hover {
   color: #172033;
+  background: #f1f5f9;
 }
 
 .ai-loading-container {
@@ -1474,6 +1497,21 @@ button.tag-chip {
   }
 }
 
+@media (max-width: 620px) {
+  .workspace-container {
+    padding: 0;
+    gap: 0;
+  }
+
+  .problem-description-pane,
+  .compiler-pane {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    padding: 1.25rem;
+  }
+}
+
 /* UI Aesthetic Enhancements for Existing Pages */
 
 .hero-card,
@@ -1572,6 +1610,30 @@ textarea:hover {
   margin: 0 auto;
   max-width: 1200px;
   padding: 2rem 1rem;
+}
+
+@media (max-width: 620px) {
+  .problems-page-container {
+    padding: 1rem 0;
+  }
+
+  .problems-hero {
+    border-radius: 0;
+    margin-bottom: 1rem;
+  }
+
+  .filters-container {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin-bottom: 1rem;
+  }
+
+  .table-responsive {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
 }
 
 .problems-hero {
@@ -1942,8 +2004,20 @@ textarea:hover {
 }
 
 .feat-icon {
-  font-size: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #f0faf5;
+  border: 1px solid #c8ecd8;
   margin-bottom: 1.25rem;
+  color: #1d4f3d;
+}
+
+.feat-icon svg {
+  margin: auto;
 }
 
 .feat-card h3 {
@@ -2088,6 +2162,25 @@ textarea:hover {
 .dashboard-page {
   display: grid;
   gap: 1.5rem;
+}
+
+@media (max-width: 620px) {
+  .dashboard-page,
+  .analytics-page {
+    padding: 0;
+  }
+
+  .analytics-header {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .analytics-table-shell {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
 }
 
 .analytics-header {

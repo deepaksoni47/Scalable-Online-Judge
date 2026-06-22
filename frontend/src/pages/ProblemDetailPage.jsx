@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import CompilerWorkspace from "../components/compiler/CompilerWorkspace.jsx";
 import DifficultyBadge from "../components/problems/DifficultyBadge.jsx";
 import TagList from "../components/problems/TagList.jsx";
@@ -49,7 +50,8 @@ const ProblemDetailPage = () => {
     return (
       <section className="detail-page">
         <Link className="back-link" to="/problems">
-          &larr; Back to problems
+          <ArrowLeft size={16} style={{ verticalAlign: "middle", marginRight: "0.35rem" }} />
+          Back to problems
         </Link>
         <div className="alert error">{error}</div>
       </section>
@@ -60,8 +62,9 @@ const ProblemDetailPage = () => {
     <div className="workspace-container">
       {/* Left Column: Problem Details & Description */}
       <article className="problem-description-pane">
-        <Link className="back-link" to="/problems" style={{ marginBottom: "1.5rem", display: "inline-block" }}>
-          &larr; Back to problems
+        <Link className="back-link" to="/problems" style={{ marginBottom: "1.5rem", display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
+          <ArrowLeft size={16} />
+          Back to problems
         </Link>
 
         <header className="problem-detail-header" style={{ marginBottom: "1rem" }}>

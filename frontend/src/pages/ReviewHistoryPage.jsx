@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { getAIReviewHistory } from "../services/aiService.js";
 import { getErrorMessage } from "../utils/getErrorMessage.js";
 import DifficultyBadge from "../components/problems/DifficultyBadge.jsx";
+import { Sparkles, X } from "lucide-react";
 
 const ReviewHistoryPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -49,8 +50,8 @@ const ReviewHistoryPage = () => {
         <div className="alert error">{error}</div>
       ) : reviews.length === 0 ? (
         <div className="empty-state" style={{ padding: "5rem 2rem", border: "1px solid #e2e8f0", borderRadius: "24px", background: "#ffffff" }}>
-          <span style={{ fontSize: "2.5rem" }}>✨</span>
-          <h3 style={{ margin: "1rem 0 0.5rem 0" }}>No Reviews Yet</h3>
+          <Sparkles size={40} style={{ margin: "0 auto 1rem", display: "block", color: "#7c3aed" }} />
+          <h3 style={{ margin: "0 0 0.5rem 0" }}>No Reviews Yet</h3>
           <p style={{ color: "#64748b", margin: 0 }}>
             When you solve problems in the workspace, click the "AI Review" button to get smart feedback.
           </p>
@@ -128,9 +129,9 @@ const ReviewHistoryPage = () => {
                 className="close-button"
                 onClick={() => setSelectedReview(null)}
                 type="button"
-                style={{ fontSize: "2rem", background: "none", border: "none", color: "#64748b", cursor: "pointer", padding: 0 }}
+                aria-label="Close review"
               >
-                &times;
+                <X size={22} />
               </button>
             </header>
 
@@ -161,8 +162,8 @@ const ReviewHistoryPage = () => {
 
               <div className="ai-review-section" style={{ marginTop: "2rem", borderTop: "1px solid #e2e8f0", paddingTop: "1.5rem" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-                  <span style={{ fontSize: "1.5rem" }}>✨</span>
-                  <h3 style={{ margin: 0, color: "#0f172a", fontSize: "1.2rem" }}>AI Feedback & Recommendations</h3>
+                  <Sparkles size={20} style={{ color: "#7c3aed", flexShrink: 0 }} />
+                  <h3 style={{ margin: 0, color: "#0f172a", fontSize: "1.2rem" }}>AI Feedback &amp; Recommendations</h3>
                 </div>
                 <div className="ai-review-markdown">
                   <ReactMarkdown>{selectedReview.review}</ReactMarkdown>

@@ -7,36 +7,31 @@ import Editor from "@monaco-editor/react";
 import { getErrorMessage } from "../../utils/getErrorMessage.js";
 import useAuth from "../../hooks/useAuth.js";
 import { Link } from "react-router-dom";
+import { Sparkles, X } from "lucide-react";
 
 const starterCode = {
   cpp: `#include <iostream>
 using namespace std;
 
 int main() {
-    int a, b;
-    cin >> a >> b;
-    cout << a + b << endl;
+    // Write your solution here
     return 0;
 }
 `,
   java: `public class Main {
     public static void main(String[] args) {
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
-        int a = scanner.nextInt();
-        int b = scanner.nextInt();
-        System.out.println(a + b);
+        // Write your solution here
     }
 }
 `,
-  python: `a, b = map(int, input().split())
-print(a + b)
+  python: `# Write your solution here
 `,
 };
 
 const starterInput = {
-  cpp: "5 10",
-  java: "5 10",
-  python: "5 10",
+  cpp: "",
+  java: "",
+  python: "",
 };
 
 const CompilerWorkspace = ({ problemId, problem }) => {
@@ -274,7 +269,7 @@ const CompilerWorkspace = ({ problemId, problem }) => {
             </label>
           </div>
 
-          <label className="code-editor-label">
+          <div className="code-editor-label">
              <span>Code Editor</span>
              <div className="monaco-editor-wrapper">
                <Editor
@@ -300,7 +295,7 @@ const CompilerWorkspace = ({ problemId, problem }) => {
                  }}
                />
              </div>
-          </label>
+          </div>
 
           <div className="editor-controls-pane">
             <label className="program-input-label">
@@ -424,7 +419,7 @@ const CompilerWorkspace = ({ problemId, problem }) => {
             <section className="ai-review-section card-fade-in">
               <div className="ai-review-header-row">
                 <div className="ai-title-group">
-                  <span className="ai-sparkle-icon">✨</span>
+                  <Sparkles size={20} className="ai-sparkle-icon" />
                   <h3>AI Code Review</h3>
                   {aiReviewCached && <span className="cached-badge">Cached</span>}
                 </div>
@@ -436,8 +431,9 @@ const CompilerWorkspace = ({ problemId, problem }) => {
                     setAiReviewCached(false);
                   }}
                   type="button"
+                  aria-label="Close AI review"
                 >
-                  &times;
+                  <X size={22} />
                 </button>
               </div>
 
@@ -529,8 +525,9 @@ const CompilerWorkspace = ({ problemId, problem }) => {
                     className="close-button"
                     onClick={() => setSelectedSubmission(null)}
                     type="button"
+                    aria-label="Close submission details"
                   >
-                    &times;
+                    <X size={22} />
                   </button>
                 </header>
 
