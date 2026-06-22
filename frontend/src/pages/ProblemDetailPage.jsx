@@ -5,6 +5,8 @@ import CompilerWorkspace from "../components/compiler/CompilerWorkspace.jsx";
 import DifficultyBadge from "../components/problems/DifficultyBadge.jsx";
 import TagList from "../components/problems/TagList.jsx";
 import { getProblemById } from "../services/problemService.js";
+import { getPublicTestCases } from "../services/testCaseService.js";
+import useAuth from "../hooks/useAuth.js";
 import { getErrorMessage } from "../utils/getErrorMessage.js";
 
 const DetailBlock = ({ title, children }) => {
@@ -22,7 +24,10 @@ const DetailBlock = ({ title, children }) => {
 
 const ProblemDetailPage = () => {
   const { id } = useParams();
+  const { isAuthenticated } = useAuth();
   const [problem, setProblem] = useState(null);
+  const [testCases, setTestCases] = useState([]);
+  const [isLoadingTestCases, setIsLoadingTestCases] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,6 +46,23 @@ const ProblemDetailPage = () => {
 
     fetchProblem();
   }, [id]);
+
+  useEffect(() => {
+    const fetchTestCases = async () => {
+      if (!isAuthenticated || !id) return;
+      try {
+        setIsLoadingTestCases(true);
+        const response = await getPublicTestCases(id);
+        setTestCases(response.data || []);
+      } catch (err) {
+        console.error("Failed to load public test cases:", err);
+      } finally {
+        setIsLoadingTestCases(false);
+      }
+    };
+
+    fetchTestCases();
+  }, [id, isAuthenticated]);
 
   if (isLoading) {
     return <div className="page-status">Loading...</div>;
@@ -111,6 +133,47 @@ const ProblemDetailPage = () => {
               </div>
             ) : (
               <p>No examples provided.</p>
+            )}
+          </section>
+
+          <section className="detail-block">
+            <h2>Public Test Cases</h2>
+            {!isAuthenticated ? (
+              <p className="auth-cta-text" style={{ margin: 0 }}>
+                Please <Link to="/login">login</Link> to view public test cases for custom runs.
+              </p>
+            ) : isLoadingTestCases ? (
+              <p>Loading test cases...</p>
+            ) : testCases.length ? (
+              <div className="examples-list">
+                {testCases.map((tc, index) => (
+                  <div className="example-card" key={tc._id || index}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                      <h3 style={{ margin: 0 }}>Test Case {index + 1}</h3>
+                      <button
+                        className="secondary-button"
+                        style={{ padding: "0.25rem 0.6rem", fontSize: "0.8rem", height: "auto" }}
+                        onClick={() => {
+                          navigator.clipboard.writeText(tc.input);
+                        }}
+                        type="button"
+                      >
+                        Copy Input
+                      </button>
+                    </div>
+                    <div>
+                      <span>Input (raw):</span>
+                      <pre>{tc.input ?? "(Empty input)"}</pre>
+                    </div>
+                    <div>
+                      <span>Expected Output:</span>
+                      <pre>{tc.expectedOutput}</pre>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No public test cases available.</p>
             )}
           </section>
 
