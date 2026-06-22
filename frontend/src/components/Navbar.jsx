@@ -24,6 +24,7 @@ const Navbar = () => {
         {isAuthenticated ? (
           <>
             <span className="nav-user">Hi, {user?.name}</span>
+            {user?.role === "admin" && <NavLink to="/admin">Admin Panel</NavLink>}
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/ai-reviews">AI Reviews</NavLink>
             <NavLink to="/profile">Profile</NavLink>
